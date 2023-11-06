@@ -1,0 +1,10 @@
+D:\KULIAH\SEMESTER 5\AI\ProyekAI\Proyek-AI\obj\Debug\Proyek-AI.csproj.AssemblyReference.cache
+D:\KULIAH\SEMESTER 5\AI\ProyekAI\Proyek-AI\obj\Debug\Proyek_AI.Form1.resources
+D:\KULIAH\SEMESTER 5\AI\ProyekAI\Proyek-AI\obj\Debug\Proyek_AI.Properties.Resources.resources
+D:\KULIAH\SEMESTER 5\AI\ProyekAI\Proyek-AI\obj\Debug\Proyek-AI.csproj.GenerateResource.cache
+D:\KULIAH\SEMESTER 5\AI\ProyekAI\Proyek-AI\obj\Debug\Proyek-AI.csproj.CoreCompileInputs.cache
+D:\KULIAH\SEMESTER 5\AI\ProyekAI\Proyek-AI\bin\Debug\Proyek-AI.exe.config
+D:\KULIAH\SEMESTER 5\AI\ProyekAI\Proyek-AI\bin\Debug\Proyek-AI.exe
+D:\KULIAH\SEMESTER 5\AI\ProyekAI\Proyek-AI\bin\Debug\Proyek-AI.pdb
+D:\KULIAH\SEMESTER 5\AI\ProyekAI\Proyek-AI\obj\Debug\Proyek-AI.exe
+D:\KULIAH\SEMESTER 5\AI\ProyekAI\Proyek-AI\obj\Debug\Proyek-AI.pdb
