@@ -19,7 +19,8 @@ function App() {
                                 [[], [], [], [], []],
                               ])
                           );
-  var [batu, setBatu] = useState();
+  var [batu, setBatu] = useState("FLAT");
+  var [action, setAction] = useState("PUT");
   var [giliran, setGiliran] = useState(global.BLACKTURN);
   var [jumMelangkah, setJumMelangkah] = useState(0);
   var [maxLevel, setMaxLevel] = useState(1);
@@ -33,10 +34,7 @@ function App() {
     wall: 0,
     cap: 0
   })
-
-  // useEffect(() => {
-  //   console.log(hitam)
-  // }, [hitam]);
+  var [angkat, setAngkat] = useState([])
 
   function findWeight(_papan) {
     var weight = 0;   
@@ -252,89 +250,148 @@ function App() {
     else { setGiliran(global.BLACKTURN); }
   }
 
-  function bukadiv(brs, klm, stone) {
-    console.log(stone);
+  function bukadiv(brs, klm, stone, aksi) {
     if(giliran == global.BLACKTURN) {
-      if(papan.arr[brs][klm].length == 5) { 
-        return; 
-      }
-      else {
-        if(stone == "FLAT"){
-          if(hitam.wall + hitam.flat >= 21){
-            alert("Black Stone habis!")
+      if (aksi == "PUT"){
+        if(papan.arr[brs][klm].length == 5) { 
+          return; 
+        }
+        else {
+          let last = papan.arr[brs][klm][papan.arr[brs][klm].length-1];
+          if(stone == "FLAT"){
+            if(hitam.wall + hitam.flat >= 21){
+              alert("Black Stone habis!")
+              return; 
+            } else {
+              if (last == global.CAPSTONE_BLACK || last == global.CAPSTONE_WHITE){
+                alert("Stone apapun tidak bisa ditaruh di atas Capstone")
+                return;
+              } else if (last == global.WALLSTONE_BLACK || last == global.WALLSTONE_WHITE){
+                alert("Stone apapun tidak bisa ditaruh di atas Wallstone")
+                return;
+              }
+              papan.arr[brs][klm].push(global.FLATSTONE_BLACK);
+              setHitam({
+                flat: hitam.flat + 1,
+                wall: hitam.wall, 
+                cap: hitam.cap
+              })
+            }
+          } else if (stone == "WALL"){
+            if(hitam.wall + hitam.flat >= 21){
+              alert("Black Stone habis!")
+              return; 
+            } else {
+              if (last == global.CAPSTONE_BLACK || last == global.CAPSTONE_WHITE){
+                alert("Stone apapun tidak bisa ditaruh di atas Capstone")
+                return;
+              } else if (last == global.WALLSTONE_BLACK || last == global.WALLSTONE_WHITE){
+                alert("Stone apapun tidak bisa ditaruh di atas Wallstone")
+                return;
+              }
+              papan.arr[brs][klm].push(global.WALLSTONE_BLACK);
+              setHitam({
+                flat: hitam.flat,
+                wall: hitam.wall + 1, 
+                cap: hitam.cap
+              })
+            }
           } else {
-            papan.arr[brs][klm].push(global.FLATSTONE_BLACK);
-            setHitam({
-              flat: hitam.flat + 1,
-              wall: hitam.wall, 
-              cap: hitam.cap
-            })
-          }
-        } else if (stone == "WALL"){
-          if(hitam.wall + hitam.flat >= 21){
-            alert("Black Stone habis!")
-          } else {
-            papan.arr[brs][klm].push(global.WALLSTONE_BLACK);
-            setHitam({
-              flat: hitam.flat,
-              wall: hitam.wall + 1, 
-              cap: hitam.cap
-            })
-          }
-        } else {
-          if(hitam.cap == 1){
-            alert("Black Cap Stone habis!")
-          } else {
-            papan.arr[brs][klm].push(global.CAPSTONE_BLACK);
-            setHitam({
-              flat: hitam.flat,
-              wall: hitam.wall, 
-              cap: hitam.cap + 1
-            })
+            if(hitam.cap == 1){
+              alert("Black Cap Stone habis!")
+              return; 
+            } else {
+              if (last == global.CAPSTONE_BLACK || last == global.CAPSTONE_WHITE){
+                alert("Stone apapun tidak bisa ditaruh di atas Capstone")
+                return;
+              } else if (last == global.WALLSTONE_BLACK || last == global.WALLSTONE_WHITE){
+                alert("Stone apapun tidak bisa ditaruh di atas Wallstone")
+                return;
+              }
+              papan.arr[brs][klm].push(global.CAPSTONE_BLACK);
+              setHitam({
+                flat: hitam.flat,
+                wall: hitam.wall, 
+                cap: hitam.cap + 1
+              })
+            }
           }
         }
+      } else {
+        // simpan nd angkat
+        setAngkat(papan.arr[brs][klm])
       }
     }
     else {
-      if(papan.arr[brs][klm].length == 5) { 
-        return; 
-      }
-      else {
-        if(stone == "FLAT"){
-          if(putih.wall + putih.flat >= 21){
-            alert("White Stone habis!")
-          } else {
-            papan.arr[brs][klm].push(global.FLATSTONE_WHITE);
-            setPutih({
-              flat: putih.flat + 1,
-              wall: putih.wall, 
-              cap: putih.cap
-            })
-          }
-        } else if (stone == "WALL"){
-          if(putih.wall + putih.flat >= 21){
-            alert("White Stone habis!")
-          } else {
-            papan.arr[brs][klm].push(global.WALLSTONE_WHITE);
-            setPutih({
-              flat: putih.flat,
-              wall: putih.wall + 1, 
-              cap: putih.cap
-            })
-          }
-        } else {
-          if(putih.cap == 1){
-            alert("White Cap Stone habis!")
-          } else {
-            papan.arr[brs][klm].push(global.CAPSTONE_WHITE);
-            setPutih({
-              flat: putih.flat,
-              wall: putih.wall, 
-              cap: putih.cap + 1
-            })
-          }
-          
+      if (aksi == "PUT"){
+        if(papan.arr[brs][klm].length == 5) { 
+          return; 
         }
+        else {
+          let last = papan.arr[brs][klm][papan.arr[brs][klm].length-1];
+          if(stone == "FLAT"){
+            if(putih.wall + putih.flat >= 21){
+              alert("White Stone habis!")
+              return; 
+            } else {
+              if (last == global.CAPSTONE_BLACK || last == global.CAPSTONE_WHITE){
+                alert("Stone apapun tidak bisa ditaruh di atas Capstone")
+                return;
+              } else if (last == global.WALLSTONE_BLACK || last == global.WALLSTONE_WHITE){
+                alert("Stone apapun tidak bisa ditaruh di atas Wallstone")
+                return;
+              }
+              papan.arr[brs][klm].push(global.FLATSTONE_WHITE);
+              setPutih({
+                flat: putih.flat + 1,
+                wall: putih.wall, 
+                cap: putih.cap
+              })
+            }
+          } else if (stone == "WALL"){
+            if(putih.wall + putih.flat >= 21){
+              alert("White Stone habis!")
+              return; 
+            } else {
+              if (last == global.CAPSTONE_BLACK || last == global.CAPSTONE_WHITE){
+                alert("Stone apapun tidak bisa ditaruh di atas Capstone")
+                return;
+              } else if (last == global.WALLSTONE_BLACK || last == global.WALLSTONE_WHITE){
+                alert("Stone apapun tidak bisa ditaruh di atas Wallstone")
+                return;
+              }
+              papan.arr[brs][klm].push(global.WALLSTONE_WHITE);
+              setPutih({
+                flat: putih.flat,
+                wall: putih.wall + 1, 
+                cap: putih.cap
+              })
+            }
+          } else {
+            if(putih.cap == 1){
+              alert("White Cap Stone habis!")
+              return; 
+            } else {
+              if (last == global.CAPSTONE_BLACK || last == global.CAPSTONE_WHITE){
+                alert("Stone apapun tidak bisa ditaruh di atas Capstone")
+                return;
+              } else if (last == global.WALLSTONE_BLACK || last == global.WALLSTONE_WHITE){
+                alert("Stone apapun tidak bisa ditaruh di atas Wallstone")
+                return;
+              }
+              papan.arr[brs][klm].push(global.CAPSTONE_WHITE);
+              setPutih({
+                flat: putih.flat,
+                wall: putih.wall, 
+                cap: putih.cap + 1
+              })
+            }
+            
+          }
+        }
+      } else {
+        // simpan nd angkat
+        setAngkat(papan.arr[brs][klm])
       }
     }
     
@@ -374,7 +431,9 @@ function App() {
         <div style={giliran == "1" ? {backgroundColor:"black", height:"40px", width:"80px"} : {backgroundColor:"white", height:"40px", width:"80px"}}></div>
       </div><br />
       <div className='flex flex-row'>
+        <p className='font-semibold'>Pilih Batu : </p>
         <div>
+
           <input type="radio" className='ms-5' name="stone" id="" value={"Flat"} 
           onClick={()=>{
             setBatu("FLAT");
@@ -392,6 +451,21 @@ function App() {
           }}/> Cap Stone
         </div>
       </div> <br />
+      <div className='flex flex-row'>
+        <p className='font-semibold'>Pilih Action : </p>
+        <div>
+          <input type="radio" className='ms-5' name="action" id="" value={"Put"} 
+          onClick={()=>{
+            setAction("PUT");
+          }}/> Put Stone
+        </div>
+        <div>
+          <input type="radio" className='ms-5' name="action" id="" value={"Move"}
+          onClick={()=>{
+            setAction("MOVE");
+          }}/> Move Stone
+        </div>
+      </div><br />
       <button className='bg-blue-300 py-2 px-5 rounded-xl font-semibold text-lg' onClick={() => runAI() }>Run AI</button><br />
       <table border='1'>
       {papan.arr.map((item, indexbar) => (
@@ -399,7 +473,7 @@ function App() {
           {
             item.map((node, indexkol) => (
               <td>
-                <div onClick={() => bukadiv(indexbar, indexkol, batu)} className="card bg-indigo-300 border border-black" style={{width: '100px', height: '80px', borderRadius: '2px', boxSizing: 'border-box', padding: '1px', margin: '1px'}} key={indexbar + indexkol}>
+                <div onClick={() => bukadiv(indexbar, indexkol, batu, action)} className="card bg-indigo-300 border border-black" style={{width: '100px', height: '80px', borderRadius: '2px', boxSizing: 'border-box', padding: '1px', margin: '1px'}} key={indexbar + indexkol}>
                   <table style={{width: '100%'}}>
                   {
                     node.slice().reverse().map((node, indexitem) => (
