@@ -19,13 +19,24 @@ function App() {
                                 [[], [], [], [], []],
                               ])
                           );
-  var [batu, setBatu] = useState(global.flat);
+  var [batu, setBatu] = useState();
   var [giliran, setGiliran] = useState(global.BLACKTURN);
   var [jumMelangkah, setJumMelangkah] = useState(0);
   var [maxLevel, setMaxLevel] = useState(1);
+  var [hitam, setHitam] = useState({
+    flat: 0,
+    wall: 0,
+    cap: 0
+  })
+  var [putih, setPutih] = useState({
+    flat: 0,
+    wall: 0,
+    cap: 0
+  })
 
-  useEffect(() => {
-  }, []);
+  // useEffect(() => {
+  //   console.log(hitam)
+  // }, [hitam]);
 
   function findWeight(_papan) {
     var weight = 0;   
@@ -241,14 +252,47 @@ function App() {
     else { setGiliran(global.BLACKTURN); }
   }
 
-  function bukadiv(brs, klm) {
+  function bukadiv(brs, klm, stone) {
+    console.log(stone);
     if(giliran == global.BLACKTURN) {
-      // maksimal papan.arr adalah 5
       if(papan.arr[brs][klm].length == 5) { 
         return; 
       }
       else {
-        papan.arr[brs][klm].push(global.FLATSTONE_BLACK);
+        if(stone == "FLAT"){
+          if(hitam.wall + hitam.flat >= 21){
+            alert("Black Stone habis!")
+          } else {
+            papan.arr[brs][klm].push(global.FLATSTONE_BLACK);
+            setHitam({
+              flat: hitam.flat + 1,
+              wall: hitam.wall, 
+              cap: hitam.cap
+            })
+          }
+        } else if (stone == "WALL"){
+          if(hitam.wall + hitam.flat >= 21){
+            alert("Black Stone habis!")
+          } else {
+            papan.arr[brs][klm].push(global.WALLSTONE_BLACK);
+            setHitam({
+              flat: hitam.flat,
+              wall: hitam.wall + 1, 
+              cap: hitam.cap
+            })
+          }
+        } else {
+          if(hitam.cap == 1){
+            alert("Black Cap Stone habis!")
+          } else {
+            papan.arr[brs][klm].push(global.CAPSTONE_BLACK);
+            setHitam({
+              flat: hitam.flat,
+              wall: hitam.wall, 
+              cap: hitam.cap + 1
+            })
+          }
+        }
       }
     }
     else {
@@ -256,7 +300,41 @@ function App() {
         return; 
       }
       else {
-        papan.arr[brs][klm].push(global.FLATSTONE_WHITE);
+        if(stone == "FLAT"){
+          if(putih.wall + putih.flat >= 21){
+            alert("White Stone habis!")
+          } else {
+            papan.arr[brs][klm].push(global.FLATSTONE_WHITE);
+            setPutih({
+              flat: putih.flat + 1,
+              wall: putih.wall, 
+              cap: putih.cap
+            })
+          }
+        } else if (stone == "WALL"){
+          if(putih.wall + putih.flat >= 21){
+            alert("White Stone habis!")
+          } else {
+            papan.arr[brs][klm].push(global.WALLSTONE_WHITE);
+            setPutih({
+              flat: putih.flat,
+              wall: putih.wall + 1, 
+              cap: putih.cap
+            })
+          }
+        } else {
+          if(putih.cap == 1){
+            alert("White Cap Stone habis!")
+          } else {
+            papan.arr[brs][klm].push(global.CAPSTONE_WHITE);
+            setPutih({
+              flat: putih.flat,
+              wall: putih.wall, 
+              cap: putih.cap + 1
+            })
+          }
+          
+        }
       }
     }
     
@@ -295,6 +373,25 @@ function App() {
         <h5 style={{marginRight:"50px", marginTop:"auto", marginBottom:"auto"}}>Giliran : { giliran }</h5>
         <div style={giliran == "1" ? {backgroundColor:"black", height:"40px", width:"80px"} : {backgroundColor:"white", height:"40px", width:"80px"}}></div>
       </div><br />
+      <div className='flex flex-row'>
+        <div>
+          <input type="radio" className='ms-5' name="stone" id="" value={"Flat"} 
+          onClick={()=>{
+            setBatu("FLAT");
+          }}/> Flat Stone
+        </div>
+        <div>
+          <input type="radio" className='ms-5' name="stone" id="" value={"Wall"} 
+          onClick={()=>{
+            setBatu("WALL");
+          }}/> Wall Stone
+        </div>
+        <div>
+          <input type="radio" className='ms-5' name="stone" id="" value={"Cap"} onClick={()=>{
+            setBatu("CAP");
+          }}/> Cap Stone
+        </div>
+      </div> <br />
       <button className='bg-blue-300 py-2 px-5 rounded-xl font-semibold text-lg' onClick={() => runAI() }>Run AI</button><br />
       <table border='1'>
       {papan.arr.map((item, indexbar) => (
@@ -302,7 +399,7 @@ function App() {
           {
             item.map((node, indexkol) => (
               <td>
-                <div onClick={() => bukadiv(indexbar, indexkol)} className="card bg-indigo-300 border border-black" style={{width: '100px', height: '80px', borderRadius: '2px', boxSizing: 'border-box', padding: '1px', margin: '1px'}} key={indexbar + indexkol}>
+                <div onClick={() => bukadiv(indexbar, indexkol, batu)} className="card bg-indigo-300 border border-black" style={{width: '100px', height: '80px', borderRadius: '2px', boxSizing: 'border-box', padding: '1px', margin: '1px'}} key={indexbar + indexkol}>
                   <table style={{width: '100%'}}>
                   {
                     node.slice().reverse().map((node, indexitem) => (
