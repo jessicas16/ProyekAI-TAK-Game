@@ -243,10 +243,21 @@ function App() {
 
   function bukadiv(brs, klm) {
     if(giliran == global.BLACKTURN) {
-      papan.arr[brs][klm].push(global.FLATSTONE_BLACK);
+      // maksimal papan.arr adalah 5
+      if(papan.arr[brs][klm].length == 5) { 
+        return; 
+      }
+      else {
+        papan.arr[brs][klm].push(global.FLATSTONE_BLACK);
+      }
     }
     else {
-      papan.arr[brs][klm].push(global.FLATSTONE_WHITE);
+      if(papan.arr[brs][klm].length == 5) { 
+        return; 
+      }
+      else {
+        papan.arr[brs][klm].push(global.FLATSTONE_WHITE);
+      }
     }
     
     // cek menang 
@@ -256,37 +267,55 @@ function App() {
     trace = [];  var flagAtas = nabrakTembok(papan.arr, brs, klm, giliran, trace, "ATAS");
     trace = [];  var flagBawah = nabrakTembok(papan.arr, brs, klm, giliran, trace, "BAWAH");
 
-    if(flagKiri == true && flagKanan == true) { alert('horizontal win'); }
-    else if(flagAtas == true && flagBawah == true) { alert('vertical win'); }
+    if(flagKiri == true && flagKanan == true) { 
+      alert('horizontal win'); 
+      if(giliran == 1){
+        alert('BLACKTURN WIN!'); 
+      } else {
+        alert('WHITETURN WIN!'); 
+      }
+    }
+    else if(flagAtas == true && flagBawah == true) { 
+      alert('vertical win'); 
+      if(giliran == 1){
+        alert('BLACKTURN WIN!'); 
+      } else {
+        alert('WHITETURN WIN!'); 
+      }
+    }
     
     gantiGiliran(); 
   }
 
   return (
     <>
-      <h4>Playtak</h4>
-      <h5>Giliran : { giliran }</h5>
-      <input type='button' onClick={() => runAI() } value="Run AI" /><br /><br />
+    <div className='w-screen h-screen bg-orange-200 flex flex-col justify-center items-center'>    
+      <h4 className='text-4xl font-semibold my-4'>Play TAK</h4>
+      <div className='flex flex-row text-lg font-semibold'>
+        <h5 style={{marginRight:"50px", marginTop:"auto", marginBottom:"auto"}}>Giliran : { giliran }</h5>
+        <div style={giliran == "1" ? {backgroundColor:"black", height:"40px", width:"80px"} : {backgroundColor:"white", height:"40px", width:"80px"}}></div>
+      </div><br />
+      <button className='bg-blue-300 py-2 px-5 rounded-xl font-semibold text-lg' onClick={() => runAI() }>Run AI</button><br />
       <table border='1'>
       {papan.arr.map((item, indexbar) => (
           <tr>
           {
             item.map((node, indexkol) => (
               <td>
-                <div onClick={() => bukadiv(indexbar, indexkol)} className="card" style={{width: '100px', height: '80px', borderRadius: '2px', backgroundColor: '#00FFFF', boxSizing: 'border-box', padding: '1px', margin: '1px'}} key={indexbar + indexkol}>
+                <div onClick={() => bukadiv(indexbar, indexkol)} className="card bg-indigo-300 border border-black" style={{width: '100px', height: '80px', borderRadius: '2px', boxSizing: 'border-box', padding: '1px', margin: '1px'}} key={indexbar + indexkol}>
                   <table style={{width: '100%'}}>
                   {
                     node.slice().reverse().map((node, indexitem) => (
                       <>
                         {
-                        <tr style={{width: '100%'}}>
-                          <td style={{width: '100%'}}>
+                        <tr className='w-full flex flex-col items-center justify-center'>
+                          <td className='w-full flex flex-col items-center justify-center'>
                             { node == global.FLATSTONE_BLACK && 
                               <div style={{width: '100%', height: '10px', color: 'white', backgroundColor: 'black', border: '0px solid black', padding: '0px', fontWeight: 'bold', fontSize: '12px'}}>
                               </div>
                             }
                             { node == global.FLATSTONE_WHITE && 
-                              <div style={{width: '100%', height: '10px', color: 'white', backgroundColor: 'red', border: '0px solid black', padding: '0px', fontWeight: 'bold', fontSize: '12px'}}>
+                              <div style={{width: '100%', height: '10px', color: 'white', backgroundColor: 'white', border: '0px solid black', padding: '0px', fontWeight: 'bold', fontSize: '12px'}}>
                               </div>
                             }
                             { node == global.WALLSTONE_BLACK && 
@@ -294,11 +323,15 @@ function App() {
                               </div>
                             }
                             { node == global.WALLSTONE_WHITE && 
-                              <div style={{width: '10%', marginLeft: '45%', height: '30px', color: 'red', backgroundColor: 'black', border: '0px solid black', padding: '0px', fontWeight: 'bold', fontSize: '12px'}}>
+                              <div style={{width: '10%', marginLeft: '45%', height: '30px', color: 'white', backgroundColor: 'white', border: '0px solid black', padding: '0px', fontWeight: 'bold', fontSize: '12px'}}>
                               </div>
                             }
                             { node == global.CAPSTONE_BLACK && 
-                              <div style={{width: '20%', marginLeft: '40%', height: '20px', color: 'red', backgroundColor: 'black', borderRadius: '10px', border: '0px solid black', padding: '0px', fontWeight: 'bold', fontSize: '12px'}}>
+                              <div style={{width: '20%', marginLeft: '40%', height: '20px', color: 'white', backgroundColor: 'black', borderRadius: '10px', border: '0px solid black', padding: '0px', fontWeight: 'bold', fontSize: '12px'}}>
+                              </div>
+                            }
+                            { node == global.CAPSTONE_WHITE && 
+                              <div style={{width: '20%', marginLeft: '40%', height: '20px', color: 'white', backgroundColor: 'white', borderRadius: '10px', border: '0px solid black', padding: '0px', fontWeight: 'bold', fontSize: '12px'}}>
                               </div>
                             }
                           </td>
@@ -315,6 +348,7 @@ function App() {
           </tr>
       ))}
       </table>
+    </div> 
     </>
   )}
 
