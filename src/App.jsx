@@ -4,11 +4,6 @@ import { Clsboard } from './Clsboard'
 
 function App() {
   var [sbe, setSBE] = useState([
-    // [0,  0,  0,   0,  0],
-    // [0,  80, 90,  80, 0],
-    // [0,  90, 100, 90, 0],
-    // [0,  80, 90,  80, 0],
-    // [0,  0,  0,   0,  0]
     [50, 60,  70,  60,  50],
     [60, 80,  100, 80,  60],
     [70, 100, 120, 100, 70],
@@ -47,7 +42,8 @@ function App() {
   })
 
   useEffect(() => {
-  }, []);
+    runAI();
+  }, [giliran]);
 
   function findWeight(_papan) {
     var weight = 0;
@@ -207,19 +203,33 @@ function App() {
             var aw = 0; var ak = 0; 
             if(_giliran == global.BLACKTURN) 
             { 
-              if(jumMelangkah < 2)
-              { aw = global.FLATSTONE_BLACK; ak = global.FLATSTONE_BLACK; } 
+              if(jumMelangkah < 2) //first time
+              { 
+                aw = global.FLATSTONE_BLACK;
+                ak = global.FLATSTONE_BLACK; 
+              } 
               else 
-              { aw = global.FLATSTONE_BLACK; ak = global.CAPSTONE_BLACK; 
-                if(hitam.cap > 0) { ak = global.WALLSTONE_BLACK; }
+              { 
+                aw = global.FLATSTONE_BLACK; 
+                ak = global.CAPSTONE_BLACK; 
+                if(hitam.cap > 0) {
+                  ak = global.WALLSTONE_BLACK; 
+                }
               }
             }
             else { 
               if(jumMelangkah < 2)
-              { aw = global.FLATSTONE_WHITE; ak = global.FLATSTONE_WHITE; } 
+              { 
+                aw = global.FLATSTONE_WHITE; 
+                ak = global.FLATSTONE_WHITE; 
+              } 
               else 
-              { aw = global.FLATSTONE_WHITE; ak = global.CAPSTONE_WHITE; 
-                if(putih.cap > 0) { ak = global.WALLSTONE_WHITE; }
+              { 
+                aw = global.FLATSTONE_WHITE; 
+                ak = global.CAPSTONE_WHITE; 
+                if(putih.cap > 0) { 
+                  ak = global.WALLSTONE_WHITE; 
+                }
               }
             }
 
@@ -258,25 +268,32 @@ function App() {
   }
 
   function runAI() {
-    var level = 1
-    var result = [];
-    result['maxweight'] = 0;
-    result['bar'] = -1;
-    result['kol'] = -1;
-    result['koin'] = -1;
-    maksimum(level, giliran, papan, result);
-    console.log("result = " + result['maxweight'] + " --- " + result['bar'] + " ---- " + result['kol']);
+    console.log(giliran)
+    if (giliran == global.WHITETURN){
+      console.log(giliran);
+      var level = 1
+      var result = [];
+      result['maxweight'] = 0;
+      result['bar'] = -1;
+      result['kol'] = -1;
+      result['koin'] = -1;
+      maksimum(level, giliran, papan, result);
+      console.log("result = " + result['maxweight'] + " --- " + result['bar'] + " ---- " + result['kol']);
+      console.log(result['koin'])
 
-    setJumMelangkah(jumMelangkah + 1);
-    papan.arr[result['bar']][result['kol']].push(result['koin']);
-
-    if (giliran == global.BLACKTURN) { setGiliran(global.WHITETURN); }
-    else { setGiliran(global.BLACKTURN); }
+      setJumMelangkah(jumMelangkah + 1);
+      papan.arr[result['bar']][result['kol']].push(result['koin']);
+      setGiliran(global.BLACKTURN); 
+    } 
   }
 
   function gantiGiliran() {
-    if (giliran == global.BLACKTURN) { setGiliran(global.WHITETURN); }
-    else { setGiliran(global.BLACKTURN); }
+    if (giliran == global.BLACKTURN) { 
+      setGiliran(global.WHITETURN); 
+    }
+    else { 
+      setGiliran(global.BLACKTURN); 
+    }
   }
 
   function validTaruh(parambrs, paramklm) {
@@ -667,7 +684,7 @@ function App() {
           }}/> Cap Stone
         </div>
       </div> <br />
-      <button className='bg-blue-300 py-2 px-5 rounded-xl font-semibold text-lg' onClick={() => runAI() }>Run AI</button><br />
+      {/* <button className='bg-blue-300 py-2 px-5 rounded-xl font-semibold text-lg' onClick={() => runAI() }>Run AI</button><br /> */}
       <button className='bg-blue-300 py-2 px-5 rounded-xl font-semibold text-lg' onClick={() => reset() }>Reset</button><br />
       <table border='0'>
         <tr>
