@@ -4,11 +4,16 @@ import { Clsboard } from './Clsboard'
 
 function App() {
   var [sbe, setSBE] = useState([
-    [0,  0,  0,   0,  0],
-    [0,  80, 90,  80, 0],
-    [0,  90, 100, 90, 0],
-    [0,  80, 90,  80, 0],
-    [0,  0,  0,   0,  0]
+    // [0,  0,  0,   0,  0],
+    // [0,  80, 90,  80, 0],
+    // [0,  90, 100, 90, 0],
+    // [0,  80, 90,  80, 0],
+    // [0,  0,  0,   0,  0]
+    [50, 60,  70,  60,  50],
+    [60, 80,  100, 80,  60],
+    [70, 100, 120, 100, 70],
+    [60, 80,  100, 80,  60],
+    [50, 60,  70,  60,  50]
   ]);
   var [papan, setPapan] = useState(
     new Clsboard(global.BLACKTURN, [
@@ -274,8 +279,9 @@ function App() {
     else { setGiliran(global.BLACKTURN); }
   }
 
-  function validTaruh(parambrs, paramklm, paramgiliran) {
+  function validTaruh(parambrs, paramklm) {
     if(brsDirection == -1 && klmDirection == -1) {
+      // naruh stack pertama kali
       if(parambrs == brsAngkat && paramklm == klmAngkat) { return true; }
       else {
         var selisihbrs = Math.abs(parambrs - brsAngkat);
@@ -285,10 +291,19 @@ function App() {
       }
     }
     else {
-      if(parambrs - lastBrs == brsDirection && paramklm - lastKlm == klmDirection)
+      // naruh stack kedua kali dst
+      var lastBrs = brsAngkat + (stackAngkat.length-1) * brsDirection;
+      var lastKlm = klmAngkat + (stackAngkat.length-1) * klmDirection;
+      var selisihbrs = Math.abs(parambrs - lastBrs);
+      var selisihklm = Math.abs(paramklm - lastKlm);
+      if((selisihbrs == 0 && selisihklm == 1) || (selisihbrs == 1 && selisihklm == 0))
       { return true; }
-      else if(parambrs == lastBrs && paramklm == lastKlm) 
-      { return true; }
+
+    
+      // if(parambrs - lastBrs == brsDirection && paramklm - lastKlm == klmDirection)
+      // { return true; }
+      // else if(parambrs == lastBrs && paramklm == lastKlm) 
+      // { return true; }
     }
 
     return false;
@@ -478,8 +493,8 @@ function App() {
         };  
       }
       else {
-        // naruh
-        if(validTaruh(brs, klm, giliran) == true) {
+        // naruh stack
+        if(validTaruh(brs, klm) == true) {
           var getLast = papan.arr[brs][klm][papan.arr[brs][klm].length-1];
           if(getLast == global.CAPSTONE_BLACK || getLast == global.CAPSTONE_WHITE){
             alert("Stone apapun tidak bisa ditaruh di atas Capstone")
