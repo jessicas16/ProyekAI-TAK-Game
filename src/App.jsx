@@ -193,25 +193,44 @@ function App() {
       status['kol'] = -1;
       status['koin'] = -1;
 
+      // probabilitas a
       for (var i = 0; i < 5; i++) {
         for (var j = 0; j < 5; j++) {
-          if (_papan.arr[i][j].length == 0)     // jika kotak tsb kondisi kosong
+          if (_papan.arr[i][j].length == 0)     // jika kotak tsb kondisi kosong 
           {
-            if (jumMelangkah >= 2) { }
-            else  // jumMelangkah < 2 adlah @ player melangkah pertama kali (harus flat_stone)
-            {
+            // berikan pengecekan apakah flatstone+wallstone masih tersedia < 21 
+            var aw = 0; var ak = 0; 
+            if(_giliran == global.BLACKTURN) 
+            { 
+              if(jumMelangkah < 2)
+              { aw = global.FLATSTONE_BLACK; ak = global.FLATSTONE_BLACK; } 
+              else 
+              { aw = global.FLATSTONE_BLACK; ak = global.CAPSTONE_BLACK; 
+                if(hitam.cap > 0) { ak = global.WALLSTONE_BLACK; }
+              }
+            }
+            else { 
+              if(jumMelangkah < 2)
+              { aw = global.FLATSTONE_WHITE; ak = global.FLATSTONE_WHITE; } 
+              else 
+              { aw = global.FLATSTONE_WHITE; ak = global.CAPSTONE_WHITE; 
+                if(putih.cap > 0) { ak = global.WALLSTONE_WHITE; }
+              }
+            }
+
+            for(var koinjalan = aw; koinjalan <= ak; koinjalan++) {
               var _arr = copyArray(_papan.arr);
               var koin = "";
               var _notgiliran = _giliran;
               if (_giliran == global.BLACKTURN) {
                 _notgiliran = global.WHITETURN;
-                koin = global.FLATSTONE_BLACK;
-                _arr[i][j].push(global.FLATSTONE_BLACK);
+                koin = koinjalan;
+                _arr[i][j].push(koinjalan);
               }
               else {
                 _notgiliran = global.BLACKTURN;
-                koin = global.FLATSTONE_WHITE;
-                _arr[i][j].push(global.FLATSTONE_WHITE);
+                koin = koinjalan;
+                _arr[i][j].push(koinjalan);
               }
 
               var weight = minimum(_level + 1, _notgiliran, new Clsboard(_giliran, _arr), _result);
@@ -243,6 +262,7 @@ function App() {
     maksimum(level, giliran, papan, result);
     console.log("result = " + result['maxweight'] + " --- " + result['bar'] + " ---- " + result['kol']);
 
+    setJumMelangkah(jumMelangkah + 1);
     papan.arr[result['bar']][result['kol']].push(result['koin']);
 
     if (giliran == global.BLACKTURN) { setGiliran(global.WHITETURN); }
@@ -491,6 +511,10 @@ function App() {
                 setLastBrs(brs); 
                 setLastKlm(klm);                
               }  
+            }
+            else {
+              setLastBrs(brs); 
+              setLastKlm(klm);   
             }
           }
         }
