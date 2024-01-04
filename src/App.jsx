@@ -58,7 +58,7 @@ function App() {
               } else if (_papan.arr[i][j][t] == global.WALLSTONE_BLACK) {
                 weight = weight + (sbe[i][j]+2);
               } else {
-                weight = weight + (sbe[i][j]+30);
+                weight = weight + (sbe[i][j]*2);
               }
             }
           }
@@ -69,7 +69,7 @@ function App() {
               } else if (_papan.arr[i][j][t] == global.WALLSTONE_WHITE) {
                 weight = weight + (sbe[i][j]+2);
               } else {
-                weight = weight + (sbe[i][j]+30);
+                weight = weight + (sbe[i][j]*2);
               }
             }
           }
