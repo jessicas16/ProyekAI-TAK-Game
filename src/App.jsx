@@ -277,8 +277,6 @@ function App() {
         result['kol'] = -1;
         result['koin'] = -1;
         maksimum(level, giliran, papan, result);
-        console.log("result = " + result['maxweight'] + " --- " + result['bar'] + " ---- " + result['kol']);
-        console.log(result['koin'])
         papan.arr[result['bar']][result['kol']].push(global.FLATSTONE_BLACK);
         papan.arr[brs][klm].push(global.FLATSTONE_WHITE);
         setHitam({
@@ -551,7 +549,7 @@ function App() {
             alert("Stone apapun tidak bisa ditaruh di atas Capstone")
             return;
           } else if (getLast == global.WALLSTONE_BLACK || getLast == global.WALLSTONE_WHITE){
-            if(stackAngkat[0] == global.CAPSTONE_BLACK || stackAngkat[0] == global.WALLSTCAPSTONE_WHITEONE_WHITE){
+            if(stackAngkat[0] == global.CAPSTONE_BLACK || stackAngkat[0] == global.CAPSTONE_WHITE){
               // alert("Stone berubahhhh :D")
               console.log("stone berubah")
               if (getLast == global.WALLSTONE_BLACK){
