@@ -324,7 +324,7 @@ function App() {
     }
   }
 
-  function validTaruh(parambrs, paramklm) {
+  function validTaruh(parambrs, paramklm, giliran) {
     if(brsDirection == -1 && klmDirection == -1) {
       // naruh stack pertama kali
       if(parambrs == brsAngkat && paramklm == klmAngkat) { return true; }
@@ -335,20 +335,11 @@ function App() {
         { return true; }
       }
     }
-    else {
-      // naruh stack kedua kali dst
-      var lastBrs = brsAngkat + (stackAngkat.length-1) * brsDirection;
-      var lastKlm = klmAngkat + (stackAngkat.length-1) * klmDirection;
-      var selisihbrs = Math.abs(parambrs - lastBrs);
-      var selisihklm = Math.abs(paramklm - lastKlm);
-      if((selisihbrs == 0 && selisihklm == 1) || (selisihbrs == 1 && selisihklm == 0))
+    else { 
+      if(parambrs - lastBrs == brsDirection && paramklm - lastKlm == klmDirection)
       { return true; }
-
-    
-      // if(parambrs - lastBrs == brsDirection && paramklm - lastKlm == klmDirection)
-      // { return true; }
-      // else if(parambrs == lastBrs && paramklm == lastKlm) 
-      // { return true; }
+      else if(parambrs == lastBrs && paramklm == lastKlm) 
+      { return true; }
     }
 
     return false;
@@ -543,35 +534,26 @@ function App() {
       }
       else {
         // naruh stack
-        if(validTaruh(brs, klm, giliran) == true) {
-          if (stackAngkat[0] == global.WALLSTONE_BLACK){
-            papan.arr[brs][klm].push(global.FLATSTONE_BLACK)
+        if(validTaruh(brs, klm) == true) {
+          var getLast = papan.arr[brs][klm][papan.arr[brs][klm].length-1];
+          if(getLast == global.CAPSTONE_BLACK || getLast == global.CAPSTONE_WHITE){
+            alert("Stone apapun tidak bisa ditaruh di atas Capstone")
+            return;
+          } else if (getLast == global.WALLSTONE_BLACK || getLast == global.WALLSTONE_WHITE){
+            if(stackAngkat[0] == global.CAPSTONE_BLACK || stackAngkat[0] == global.CAPSTONE_WHITE){
+              // alert("Stone berubahhhh :D")
+              console.log("stone berubah")
+              if (getLast == global.WALLSTONE_BLACK){
+                papan.arr[brs][klm][papan.arr[brs][klm].length-1] = global.FLATSTONE_BLACK;
+              } else {
+                papan.arr[brs][klm][papan.arr[brs][klm].length-1] = global.FLATSTONE_WHITE;
+              }
+            } else {
+              alert("Stone apapun tidak bisa ditaruh di atas Wallstone selain Capstone")
+              return;
+            }
           }
-          else if (stackAngkat[0] == global.WALLSTONE_WHITE) {
-            papan.arr[brs][klm].push(global.FLATSTONE_WHITE);
-          }
-          else {
-            papan.arr[brs][klm].push(stackAngkat[0])
-          }
-          // var getLast = papan.arr[brs][klm][papan.arr[brs][klm].length-1];
-          // if(getLast == global.CAPSTONE_BLACK || getLast == global.CAPSTONE_WHITE){
-          //   alert("Stone apapun tidak bisa ditaruh di atas Capstone")
-          //   return;
-          // } else if (getLast == global.WALLSTONE_BLACK || getLast == global.WALLSTONE_WHITE){
-          //   if(stackAngkat[0] == global.CAPSTONE_BLACK || stackAngkat[0] == global.CAPSTONE_WHITE){
-          //     // alert("Stone berubahhhh :D")
-          //     console.log("stone berubah")
-          //     if (getLast == global.WALLSTONE_BLACK){
-          //       papan.arr[brs][klm][papan.arr[brs][klm].length-1] = global.FLATSTONE_BLACK;
-          //     } else {
-          //       papan.arr[brs][klm][papan.arr[brs][klm].length-1] = global.FLATSTONE_WHITE;
-          //     }
-          //   } else {
-          //     alert("Stone apapun tidak bisa ditaruh di atas Wallstone selain Capstone")
-          //     return;
-          //   }
-          // }
-          // papan.arr[brs][klm].push(stackAngkat[0]);
+          papan.arr[brs][klm].push(stackAngkat[0]);
           setStackAngkat(stackAngkat.filter((item, index) => index != 0));
           if(stackAngkat.length == 1) {
             setBrsAngkat(-1); 
