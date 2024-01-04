@@ -54,11 +54,11 @@ function App() {
           if (_papan.giliran == global.BLACKTURN) {
             if (_papan.arr[i][j][t] >= global.FLATSTONE_BLACK && _papan.arr[i][j][t] <= global.CAPSTONE_BLACK) {
               if (_papan.arr[i][j][t] == global.FLATSTONE_BLACK) {
-                weight = weight + sbe[i][j];
+                weight = weight + (sbe[i][j]);
               } else if (_papan.arr[i][j][t] == global.WALLSTONE_BLACK) {
-                weight = weight + sbe[i][j] * 2;
+                weight = weight + (sbe[i][j]+2);
               } else {
-                weight = weight + sbe[i][j] * 3;
+                weight = weight + (sbe[i][j]+30);
               }
             }
           }
@@ -67,9 +67,9 @@ function App() {
               if (_papan.arr[i][j][t] == global.FLATSTONE_WHITE) {
                 weight = weight + sbe[i][j];
               } else if (_papan.arr[i][j][t] == global.WALLSTONE_WHITE) {
-                weight = weight + sbe[i][j] * 2;
+                weight = weight + (sbe[i][j]+2);
               } else {
-                weight = weight + sbe[i][j] * 3;
+                weight = weight + (sbe[i][j]+30);
               }
             }
           }
@@ -287,23 +287,17 @@ function App() {
                     continue;
                   }
                 } else if (koinjalan == global.WALLSTONE_WHITE){
-                  // if (putih.wall + putih.flat >= 21) {
-                  //   console.log("wallstone habis")
-                  //   continue;
-                  // } else {
-                  //   _arr[i][j].push(koinjalan);
-                  //   putih.wall = putih.wall + 1;
-                  // }
+                  if (putih.wall + putih.flat < 21) {
+                    _arr[i][j].push(koinjalan);
+                    putih.wall = putih.wall + 1;
+                  }
                 } else {
-                  if (putih.wall + putih.flat >= 21) {
-                    continue;
-                  } else {
+                  if (putih.wall + putih.flat < 21) {
                     _arr[i][j].push(koinjalan);
                     putih.flat = putih.flat + 1;
                   }
                 }
               }
-              console.log("wallstone")
 
               var weight = minimum(_level + 1, _notgiliran, new Clsboard(_giliran, _arr), _result);
               if (weight > status['maxweight']) {
@@ -369,6 +363,33 @@ function App() {
 
       setJumMelangkah(jumMelangkah + 1);
       papan.arr[result['bar']][result['kol']].push(result['koin']);
+
+      var trace = [];
+      trace = []; var flagKiri = nabrakTembok(papan.arr, result['bar'], result['kol'], giliran, trace, "KIRI");
+      trace = []; var flagKanan = nabrakTembok(papan.arr, result['bar'], result['kol'], giliran, trace, "KANAN");
+      trace = []; var flagAtas = nabrakTembok(papan.arr, result['bar'], result['kol'], giliran, trace, "ATAS");
+      trace = []; var flagBawah = nabrakTembok(papan.arr, result['bar'], result['kol'], giliran, trace, "BAWAH");
+
+      if (flagKiri == true && flagKanan == true) { 
+        alert('horizontal win'); 
+        if(giliran == 1){
+          alert('BLACKTURN WIN!'); 
+          return;
+        } else {
+          alert('WHITETURN WIN!'); 
+          return;
+        }
+      }
+      else if (flagAtas == true && flagBawah == true) { 
+        alert('vertical win'); 
+        if(giliran == 1){
+          alert('BLACKTURN WIN!'); 
+          return;
+        } else {
+          alert('WHITETURN WIN!'); 
+          return;
+        }
+      }
       setGiliran(global.BLACKTURN); 
     } 
   }
