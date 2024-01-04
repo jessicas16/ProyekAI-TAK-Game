@@ -148,7 +148,7 @@ function App() {
           if (_papan.arr[i][j].length == 0)     // jika kotak tsb kondisi kosong
           {
             if (jumMelangkah < 2) {
-              
+
             }
             else  // jumMelangkah < 2 adlah @ player melangkah pertama kali (harus flat_stone)
             {
@@ -266,10 +266,41 @@ function App() {
     }
   }
 
+  function pertama(brs, klm){
+    // pertama kali AI
+    if(giliran == global.BLACKTURN){
+      if (jumMelangkah == 0) {
+        var level = 1
+        var result = [];
+        result['maxweight'] = 0;
+        result['bar'] = -1;
+        result['kol'] = -1;
+        result['koin'] = -1;
+        maksimum(level, giliran, papan, result);
+        console.log("result = " + result['maxweight'] + " --- " + result['bar'] + " ---- " + result['kol']);
+        console.log(result['koin'])
+        papan.arr[result['bar']][result['kol']].push(global.FLATSTONE_BLACK);
+        papan.arr[brs][klm].push(global.FLATSTONE_WHITE);
+        setHitam({
+          flat: hitam.flat + 1,
+          wall: hitam.wall, 
+          cap: hitam.cap
+        })
+        setJumMelangkah(1);
+      }
+    } else {
+      papan.arr[brs][klm].push(global.FLATSTONE_WHITE);
+      setPutih({
+        flat: putih.flat + 1,
+        wall: putih.wall, 
+        cap: putih.cap
+      })
+      setJumMelangkah(1);
+    }
+  }
+
   function runAI() {
-    console.log(giliran)
     if (giliran == global.WHITETURN){
-      console.log(giliran);
       var level = 1
       var result = [];
       result['maxweight'] = 0;
@@ -614,7 +645,15 @@ function App() {
   }
 
   function Kotak2(indexbar, indexkol, node) {
-    return <div onClick={() => bukadiv(indexbar, indexkol, batu)} className="card bg-indigo-300 border border-black" style={{ width: '100px', height: '80px', borderRadius: '2px', boxSizing: 'border-box', padding: '1px', margin: '1px' }} key={indexbar + indexkol}>
+    return <div onClick={() => 
+      {
+        if (jumMelangkah == 0) {
+          pertama(indexbar, indexkol)
+        } else {
+          bukadiv(indexbar, indexkol, batu)
+        }
+      }
+    } className="card bg-indigo-300 border border-black" style={{ width: '100px', height: '80px', borderRadius: '2px', boxSizing: 'border-box', padding: '1px', margin: '1px' }} key={indexbar + indexkol}>
       <table style={{ width: '100%' }}>
         {node.slice().reverse().map((revnode, indexitem) => (
           <>
