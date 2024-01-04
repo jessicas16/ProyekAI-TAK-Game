@@ -148,8 +148,7 @@ function App() {
           if (_papan.arr[i][j].length == 0)     // jika kotak tsb kondisi kosong
           {
             if (jumMelangkah < 2) {
-              // hanya boleh meletakkan flatstone 
-
+              
             }
             else  // jumMelangkah < 2 adlah @ player melangkah pertama kali (harus flat_stone)
             {
@@ -158,13 +157,13 @@ function App() {
               var _notgiliran = _giliran;
               if (_giliran == global.BLACKTURN) {
                 _notgiliran = global.WHITETURN;
-                koin = global.FLATSTONE_BLACK;
-                _arr[i][j].push(global.FLATSTONE_BLACK);
+                koin = global.FLATSTONE_WHITE;
+                _arr[i][j].push(global.FLATSTONE_WHITE);
               }
               else {
                 _notgiliran = global.BLACKTURN;
-                koin = global.FLATSTONE_WHITE;
-                _arr[i][j].push(global.FLATSTONE_WHITE);
+                koin = global.FLATSTONE_BLACK;
+                _arr[i][j].push(global.FLATSTONE_BLACK);
               }
 
               var weight = maksimum(_level + 1, _notgiliran, new Clsboard(_giliran, _arr), _result);
@@ -473,16 +472,20 @@ function App() {
         alert('horizontal win'); 
         if(giliran == 1){
           alert('BLACKTURN WIN!'); 
+          return;
         } else {
           alert('WHITETURN WIN!'); 
+          return;
         }
       }
       else if (flagAtas == true && flagBawah == true) { 
         alert('vertical win'); 
         if(giliran == 1){
           alert('BLACKTURN WIN!'); 
+          return;
         } else {
           alert('WHITETURN WIN!'); 
+          return;
         }
       }
       setJumMelangkah(jumMelangkah + 1);
