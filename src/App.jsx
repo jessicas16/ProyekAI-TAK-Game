@@ -58,7 +58,7 @@ function App() {
               } else if (_papan.arr[i][j][t] == global.WALLSTONE_BLACK) {
                 weight = weight + (sbe[i][j]+2);
               } else {
-                weight = weight + (sbe[i][j]*2);
+                weight = weight + (sbe[i][j]+15);
               }
             }
           }
@@ -69,7 +69,7 @@ function App() {
               } else if (_papan.arr[i][j][t] == global.WALLSTONE_WHITE) {
                 weight = weight + (sbe[i][j]+2);
               } else {
-                weight = weight + (sbe[i][j]*2);
+                weight = weight + (sbe[i][j]+15);
               }
             }
           }
@@ -280,21 +280,39 @@ function App() {
                 _notgiliran = global.BLACKTURN;
                 koin = koinjalan;
                 if (koinjalan == global.CAPSTONE_WHITE) {
-                  if (putih.cap == 0) {
-                    _arr[i][j].push(koinjalan);
-                    putih.cap = putih.cap + 1;
+                  console.log(putih.cap)
+                  if (putih.cap === 0) {
+                    setPutih({
+                      flat: putih.flat,
+                      wall: putih.wall, 
+                      cap: putih.cap + 1
+                    })
                   } else {
-                    continue;
+                    break;
                   }
-                } else if (koinjalan == global.WALLSTONE_WHITE){
+                } 
+                if (koinjalan == global.WALLSTONE_WHITE){
                   if (putih.wall + putih.flat < 21) {
                     _arr[i][j].push(koinjalan);
-                    putih.wall = putih.wall + 1;
+                    setPutih({
+                      flat: putih.flat,
+                      wall: putih.wall + 1, 
+                      cap: putih.cap
+                    })
+                  } else {
+                    break;
                   }
-                } else {
+                } 
+                if (koinjalan == global.FLATSTONE_WHITE) {
                   if (putih.wall + putih.flat < 21) {
                     _arr[i][j].push(koinjalan);
-                    putih.flat = putih.flat + 1;
+                    setPutih({
+                      flat: putih.flat + 1,
+                      wall: putih.wall, 
+                      cap: putih.cap
+                    })
+                  } else {
+                    break;
                   }
                 }
               }
@@ -361,9 +379,51 @@ function App() {
       console.log("result = " + result['maxweight'] + " --- " + result['bar'] + " ---- " + result['kol']);
       console.log(result['koin'])
 
-      setJumMelangkah(jumMelangkah + 1);
-      papan.arr[result['bar']][result['kol']].push(result['koin']);
+      if (papan.arr[result['bar']][result['kol']].length == 0 && brsAngkat == -1) {
+        // titik itu kosong
+        if(papan.arr[result['bar']][result['kol']].length == 5) { 
+          return; 
+        }
+        else {
+          console.log("masukkkkk")
+          console.log(result['koin'])
+          if(result['koin'] == global.FLATSTONE_WHITE){
+            
+              papan.arr[result['bar']][result['kol']].push(global.FLATSTONE_WHITE);
+              setPutih({
+                flat: putih.flat + 1,
+                wall: putih.wall, 
+                cap: putih.cap
+              })
+            
+          } else if (result['koin'] == global.FLATSTONE_BLACK){
+           
+              papan.arr[result['bar']][result['kol']].push(global.WALLSTONE_WHITE);
+              setPutih({
+                flat: putih.flat,
+                wall: putih.wall + 1, 
+                cap: putih.cap
+              })
+            
+          } else {
+              papan.arr[result['bar']][result['kol']].push(global.CAPSTONE_WHITE);
+              setPutih({
+                flat: putih.flat,
+                wall: putih.wall, 
+                cap: putih.cap + 1
+              })
+          }
+          setJumMelangkah(jumMelangkah + 1);
+        }
+        // setJumMelangkah(jumMelangkah + 1);
+        // papan.arr[result['bar']][result['kol']].push(result['koin']);
 
+      } else {
+
+      }
+
+
+      // cek menang!
       var trace = [];
       trace = []; var flagKiri = nabrakTembok(papan.arr, result['bar'], result['kol'], giliran, trace, "KIRI");
       trace = []; var flagKanan = nabrakTembok(papan.arr, result['bar'], result['kol'], giliran, trace, "KANAN");
