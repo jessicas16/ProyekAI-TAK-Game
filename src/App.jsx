@@ -517,8 +517,18 @@ function App() {
             alert("Stone apapun tidak bisa ditaruh di atas Capstone")
             return;
           } else if (getLast == global.WALLSTONE_BLACK || getLast == global.WALLSTONE_WHITE){
-            alert("Stone apapun tidak bisa ditaruh di atas Wallstone")
-            return;
+            if(stackAngkat[0] == global.CAPSTONE_BLACK || stackAngkat[0] == global.WALLSTCAPSTONE_WHITEONE_WHITE){
+              // alert("Stone berubahhhh :D")
+              console.log("stone berubah")
+              if (getLast == global.WALLSTONE_BLACK){
+                papan.arr[brs][klm][papan.arr[brs][klm].length-1] = global.FLATSTONE_BLACK;
+              } else {
+                papan.arr[brs][klm][papan.arr[brs][klm].length-1] = global.FLATSTONE_WHITE;
+              }
+            } else {
+              alert("Stone apapun tidak bisa ditaruh di atas Wallstone selain Capstone")
+              return;
+            }
           }
           papan.arr[brs][klm].push(stackAngkat[0]);
           setStackAngkat(stackAngkat.filter((item, index) => index != 0));
