@@ -45,18 +45,42 @@ function App() {
     runAI();
   }, [giliran]);
 
+  function cekMenang(_papan, b, k){
+    var trace = [];
+    trace = []; var flagKiri = nabrakTembok(_papan.arr, b, k, _papan.giliran, trace, "KIRI");
+    trace = []; var flagKanan = nabrakTembok(_papan.arr, b, k, _papan.giliran, trace, "KANAN");
+    trace = []; var flagAtas = nabrakTembok(_papan.arr, b, k, _papan.giliran, trace, "ATAS");
+    trace = []; var flagBawah = nabrakTembok(_papan.arr, b, k, _papan.giliran, trace, "BAWAH");
+
+    if (flagKiri == true && flagKanan == true) { 
+      return true;
+    }
+    else if (flagAtas == true && flagBawah == true) { 
+      return true;
+    }
+    return false;
+  }
+
   function findWeight(_papan) {
     var weight = 0;
     for (var i = 0; i < 5; i++) {
       for (var j = 0; j < 5; j++) {
         if (_papan.arr[i][j].length > 0) {
+          var top = _papan.arr[i][j].length - 1; 
+          if(_papan.arr[i][j][top] == 21 || _papan.arr[i][j][top] == 23) {
+            if(cekMenang(_papan, i, j) == true) { return 1000; }
+          }
+          else if(_papan.arr[i][j][top] == 11 || _papan.arr[i][j][top] == 13) {
+            if(cekMenang(_papan, i, j) == true) { return 900; }
+          }
+
           var t = _papan.arr[i][j].length - 1;
           if (_papan.giliran == global.BLACKTURN) {
             if (_papan.arr[i][j][t] >= global.FLATSTONE_BLACK && _papan.arr[i][j][t] <= global.CAPSTONE_BLACK) {
               if (_papan.arr[i][j][t] == global.FLATSTONE_BLACK) {
                 weight = weight + (sbe[i][j]);
               } else if (_papan.arr[i][j][t] == global.WALLSTONE_BLACK) {
-                weight = weight + (sbe[i][j]+2);
+                weight = weight + (sbe[i][j]);
               } else {
                 weight = weight + (sbe[i][j]+15);
               }
@@ -67,7 +91,7 @@ function App() {
               if (_papan.arr[i][j][t] == global.FLATSTONE_WHITE) {
                 weight = weight + sbe[i][j];
               } else if (_papan.arr[i][j][t] == global.WALLSTONE_WHITE) {
-                weight = weight + (sbe[i][j]+2);
+                weight = weight + (sbe[i][j]);
               } else {
                 weight = weight + (sbe[i][j]+15);
               }
@@ -396,7 +420,7 @@ function App() {
                 cap: putih.cap
               })
             
-          } else if (result['koin'] == global.FLATSTONE_BLACK){
+          } else if (result['koin'] == global.WALLSTONE_WHITE){
            
               papan.arr[result['bar']][result['kol']].push(global.WALLSTONE_WHITE);
               setPutih({
