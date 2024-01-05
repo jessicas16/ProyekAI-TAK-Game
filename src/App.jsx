@@ -745,6 +745,34 @@ function App() {
               setLastKlm(klm);
             }
           }
+
+            // cek menang 
+            var trace = [];
+            trace = []; var flagKiri = nabrakTembok(papan.arr, brs, klm, giliran, trace, "KIRI");
+            trace = []; var flagKanan = nabrakTembok(papan.arr, brs, klm, giliran, trace, "KANAN");
+            trace = []; var flagAtas = nabrakTembok(papan.arr, brs, klm, giliran, trace, "ATAS");
+            trace = []; var flagBawah = nabrakTembok(papan.arr, brs, klm, giliran, trace, "BAWAH");
+
+            if (flagKiri == true && flagKanan == true) { 
+              alert('horizontal win'); 
+              if(giliran == 1){
+                alert('BLACKTURN WIN!'); 
+                return;
+              } else {
+                alert('WHITETURN WIN!'); 
+                return;
+              }
+            }
+            else if (flagAtas == true && flagBawah == true) { 
+              alert('vertical win'); 
+              if(giliran == 1){
+                alert('BLACKTURN WIN!'); 
+                return;
+              } else {
+                alert('WHITETURN WIN!'); 
+                return;
+              }
+            }
         }
         else {
           console.log('wrong');
