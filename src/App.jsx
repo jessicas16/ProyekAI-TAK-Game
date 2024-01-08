@@ -46,20 +46,21 @@ function App() {
     runAI();
   }, [giliran]);
 
-  function cekMenang(_papan, b, k){
+  function cekMenang(arr, gil, b, k) {
+    // cek menang!
     var trace = [];
-    trace = []; var flagKiri = nabrakTembok(_papan.arr, b, k, _papan.giliran, trace, "KIRI");
-    trace = []; var flagKanan = nabrakTembok(_papan.arr, b, k, _papan.giliran, trace, "KANAN");
-    trace = []; var flagAtas = nabrakTembok(_papan.arr, b, k, _papan.giliran, trace, "ATAS");
-    trace = []; var flagBawah = nabrakTembok(_papan.arr, b, k, _papan.giliran, trace, "BAWAH");
+    trace = []; var flagKiri = nabrakTembok(arr, b, k, gil, trace, "KIRI");
+    trace = []; var flagKanan = nabrakTembok(arr, b, k, gil, trace, "KANAN");
+    trace = []; var flagAtas = nabrakTembok(arr, b, k, gil, trace, "ATAS");
+    trace = []; var flagBawah = nabrakTembok(arr, b, k, gil, trace, "BAWAH");
 
     if (flagKiri == true && flagKanan == true) { 
-      return true;
+      return true; 
     }
     else if (flagAtas == true && flagBawah == true) { 
-      return true;
+      return true; 
     }
-    return false;
+    return false; 
   }
 
   function findWeight(_papan) {
@@ -68,13 +69,12 @@ function App() {
     for (var i = 0; i < 5; i++) {
       for (var j = 0; j < 5; j++) {
         if (_papan.arr[i][j].length > 0) {
+          // pngecekan kalau ai harus menang
           var top = _papan.arr[i][j].length - 1; 
           if(_papan.arr[i][j][top] == 21 || _papan.arr[i][j][top] == 23) {
-            if(cekMenang(_papan, i, j) == true) { return 1000; }
+            if(cekMenang(_papan.arr, global.WHITETURN, i, j) == true) { return 1000; }
           }
-          else if(_papan.arr[i][j][top] == 11 || _papan.arr[i][j][top] == 13) {
-            if(cekMenang(_papan, i, j) == true) { return 900; }
-          }
+
 
 
           var t = _papan.arr[i][j].length - 1;
