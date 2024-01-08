@@ -90,9 +90,9 @@ function App() {
           if (_papan.giliran == global.BLACKTURN) {
             if (_papan.arr[i][j][t] >= global.FLATSTONE_BLACK && _papan.arr[i][j][t] <= global.CAPSTONE_BLACK) {
               if (_papan.arr[i][j][t] == global.FLATSTONE_BLACK) {
-                weight = weight + (sbe[i][j]) + 2;
+                weight = weight + (sbe[i][j]) + 4;
               } else if (_papan.arr[i][j][t] == global.WALLSTONE_BLACK) {
-                weight = weight + (sbe[i][j]) + 1;
+                weight = weight + (sbe[i][j]) + 2;
               } else if (_papan.arr[i][j][t] == global.CAPSTONE_BLACK){
                 weight = weight + (sbe[i][j]) + 10;
               } else  if (_papan.arr[i][j][t] == global.FLATSTONE_WHITE) {
@@ -113,9 +113,9 @@ function App() {
               } else if (_papan.arr[i][j][t] == global.CAPSTONE_BLACK){
                 weight = weight + (sbe[i][j]) - 5;
               } else  if (_papan.arr[i][j][t] == global.FLATSTONE_WHITE) {
-                weight = weight + (sbe[i][j]) + 2;
+                weight = weight + (sbe[i][j]) + 4;
               } else if (_papan.arr[i][j][t] == global.WALLSTONE_WHITE) {
-                weight = weight + (sbe[i][j]) + 1;
+                weight = weight + (sbe[i][j]) + 2;
               } else if (_papan.arr[i][j][t] == global.CAPSTONE_WHITE){
                 weight = weight + (sbe[i][j]) + 10;
               }
@@ -363,9 +363,7 @@ function App() {
                       wall: putih.wall, 
                       cap: putih.cap + 1
                     })
-                  } else {
-                    break;
-                  }
+                  } 
                 } 
                 if (koinjalan == global.WALLSTONE_WHITE){
                   if (putih.wall + putih.flat < 21) {
@@ -375,9 +373,7 @@ function App() {
                       wall: putih.wall + 1, 
                       cap: putih.cap
                     })
-                  } else {
-                    break;
-                  }
+                  } 
                 } 
                 if (koinjalan == global.FLATSTONE_WHITE) {
                   if (putih.wall + putih.flat < 21) {
@@ -387,15 +383,13 @@ function App() {
                       wall: putih.wall, 
                       cap: putih.cap
                     })
-                  } else {
-                    break;
                   }
                 }
               }
 
               var weight = minimum(_level + 1, _notgiliran, new Clsboard(_giliran, _arr), _result);
               if (weight > status['maxweight']) {
-                console.log('koin' , koin)
+                // console.log('koin' , koin)
                 status['maxweight'] = weight;
                 status['bar'] = i;
                 status['kol'] = j;
@@ -463,23 +457,19 @@ function App() {
         }
         else {
           if(result['koin'] == global.FLATSTONE_WHITE){
-            
               papan.arr[result['bar']][result['kol']].push(global.FLATSTONE_WHITE);
               setPutih({
                 flat: putih.flat + 1,
                 wall: putih.wall, 
                 cap: putih.cap
               })
-            
           } else if (result['koin'] == global.WALLSTONE_WHITE){
-           
               papan.arr[result['bar']][result['kol']].push(global.WALLSTONE_WHITE);
               setPutih({
                 flat: putih.flat,
                 wall: putih.wall + 1, 
                 cap: putih.cap
               })
-            
           } else {
               papan.arr[result['bar']][result['kol']].push(global.CAPSTONE_WHITE);
               setPutih({
@@ -490,11 +480,56 @@ function App() {
           }
           setJumMelangkah(jumMelangkah + 1);
         }
-        // setJumMelangkah(jumMelangkah + 1);
-        // papan.arr[result['bar']][result['kol']].push(result['koin']);
-
       } else {
-
+        if (brsAngkat == -1){
+          // angkat stack
+          if (papan.arr[result['bar']][result['kol']].length > 0) {
+            var top = papan.arr[result['bar']][result['kol']].length - 1;
+            var topstack = papan.arr[result['bar']][result['kol']][top];
+            if (topstack == global.FLATSTONE_WHITE || topstack == global.CAPSTONE_WHITE) {
+              setBrsAngkat(result['bar']); 
+              setKlmAngkat(result['kol']); 
+              setBrsDirection(-1); 
+              setKlmDirection(-1); 
+              setStackAngkat(papan.arr[result['bar']][result['kol']]);
+              papan.arr[result['bar']][result['kol']] = []; 
+            }
+          }
+        } else {
+          // naruh stack
+          if(validTaruh(result['bar'], result['kol'], giliran) == true) {
+            var getLast = papan.arr[result['bar']][result['kol']][papan.arr[result['bar']][result['kol']].length-1];
+            if(getLast == global.CAPSTONE_BLACK || getLast == global.CAPSTONE_WHITE){
+              alert("Stone apapun tidak bisa ditaruh di atas Capstone")
+              return;
+            } else if (getLast == global.WALLSTONE_BLACK || getLast == global.WALLSTONE_WHITE){
+              if(stackAngkat[0] == global.CAPSTONE_BLACK || stackAngkat[0] == global.CAPSTONE_WHITE){
+                // alert("Stone berubahhhh :D")
+                console.log("stone berubah")
+                if (getLast == global.WALLSTONE_BLACK){
+                  papan.arr[result['bar']][result['kol']][papan.arr[result['bar']][result['kol']].length-1] = global.FLATSTONE_BLACK;
+                } else {
+                  papan.arr[result['bar']][result['kol']][papan.arr[result['bar']][result['kol']].length-1] = global.FLATSTONE_WHITE;
+                }
+              } else {
+                alert("Stone apapun tidak bisa ditaruh di atas Wallstone selain Capstone")
+                return;
+              }
+            }
+            papan.arr[result['bar']][result['kol']].push(stackAngkat[0]);
+            setStackAngkat(stackAngkat.filter((item, index) => index != 0));
+            if(stackAngkat.length == 1) {
+              setBrsAngkat(-1); 
+              setKlmAngkat(-1); 
+              setBrsDirection(-1); 
+              setKlmDirection(-1); 
+              setLastBrs(-1); 
+              setLastKlm(-1); 
+              setJumMelangkah(jumMelangkah + 1);
+              gantiGiliran();
+            }
+          }
+        }
       }
 
 
