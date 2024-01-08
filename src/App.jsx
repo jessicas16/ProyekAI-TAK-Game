@@ -4,11 +4,11 @@ import { Clsboard } from './Clsboard'
 
 function App() {
   var [sbe, setSBE] = useState([
-    [50, 60,  70,  60,  50],
-    [60, 80,  100, 80,  60],
-    [70, 100, 120, 100, 70],
-    [60, 80,  100, 80,  60],
-    [50, 60,  70,  60,  50]
+    [3, 1,  2,  1,  3],
+    [1, 3,  4, 3,  1],
+    [2, 4, 2, 4, 2],
+    [1, 3,  4, 3,  1],
+    [3, 1,  2,  1,  3]
   ]);
   var [papan, setPapan] = useState(
     new Clsboard(global.BLACKTURN, [
@@ -30,6 +30,7 @@ function App() {
   var [brsDirection, setBrsDirection] = useState(-1);
   var [klmDirection, setKlmDirection] = useState(-1);
   var [stackAngkat, setStackAngkat] = useState([]);
+  var [sudah, setSudah] = useState(false);
   var [hitam, setHitam] = useState({
     flat: 0,
     wall: 0,
@@ -63,6 +64,7 @@ function App() {
 
   function findWeight(_papan) {
     var weight = 0;
+    setSudah(false)
     for (var i = 0; i < 5; i++) {
       for (var j = 0; j < 5; j++) {
         if (_papan.arr[i][j].length > 0) {
@@ -73,27 +75,49 @@ function App() {
           else if(_papan.arr[i][j][top] == 11 || _papan.arr[i][j][top] == 13) {
             if(cekMenang(_papan, i, j) == true) { return 900; }
           }
+          // pengecekan kalau harus ngeblok player spy tidak menang
+          if(!sudah){
+            _papan.arr[i][j].push(global.FLATSTONE_BLACK);
+            var res = cekMenang(_papan.arr, global.BLACKTURN, i, j);
+            _papan.arr[i][j].pop();
+            if(res == true) { 
+              setSudah(true)
+              return 900; 
+            }
+          }     
 
           var t = _papan.arr[i][j].length - 1;
           if (_papan.giliran == global.BLACKTURN) {
             if (_papan.arr[i][j][t] >= global.FLATSTONE_BLACK && _papan.arr[i][j][t] <= global.CAPSTONE_BLACK) {
               if (_papan.arr[i][j][t] == global.FLATSTONE_BLACK) {
-                weight = weight + (sbe[i][j]);
+                weight = weight + (sbe[i][j]) + 2;
               } else if (_papan.arr[i][j][t] == global.WALLSTONE_BLACK) {
-                weight = weight + (sbe[i][j]);
-              } else {
-                weight = weight + (sbe[i][j]+15);
+                weight = weight + (sbe[i][j]) + 1;
+              } else if (_papan.arr[i][j][t] == global.CAPSTONE_BLACK){
+                weight = weight + (sbe[i][j]) + 10;
+              } else  if (_papan.arr[i][j][t] == global.FLATSTONE_WHITE) {
+                weight = weight + (sbe[i][j]) - 2;
+              } else if (_papan.arr[i][j][t] == global.WALLSTONE_WHITE) {
+                weight = weight + (sbe[i][j]) - 1;
+              } else if (_papan.arr[i][j][t] == global.CAPSTONE_WHITE){
+                weight = weight + (sbe[i][j]) - 5;
               }
             }
           }
           else {
             if (_papan.arr[i][j][t] >= global.FLATSTONE_WHITE && _papan.arr[i][j][t] <= global.CAPSTONE_WHITE) {
-              if (_papan.arr[i][j][t] == global.FLATSTONE_WHITE) {
-                weight = weight + sbe[i][j];
+              if (_papan.arr[i][j][t] == global.FLATSTONE_BLACK) {
+                weight = weight + (sbe[i][j]) - 2;
+              } else if (_papan.arr[i][j][t] == global.WALLSTONE_BLACK) {
+                weight = weight + (sbe[i][j]) - 1;
+              } else if (_papan.arr[i][j][t] == global.CAPSTONE_BLACK){
+                weight = weight + (sbe[i][j]) - 5;
+              } else  if (_papan.arr[i][j][t] == global.FLATSTONE_WHITE) {
+                weight = weight + (sbe[i][j]) + 2;
               } else if (_papan.arr[i][j][t] == global.WALLSTONE_WHITE) {
-                weight = weight + (sbe[i][j]);
-              } else {
-                weight = weight + (sbe[i][j]+15);
+                weight = weight + (sbe[i][j]) + 1;
+              } else if (_papan.arr[i][j][t] == global.CAPSTONE_WHITE){
+                weight = weight + (sbe[i][j]) + 10;
               }
             }
           }
@@ -170,6 +194,7 @@ function App() {
 
   function minimum(_level, _giliran, _papan, _result) {
     if (_level > maxLevel) {
+      console.log("weight" + findWeight(_papan));
       return findWeight(_papan);
     }
     else {
@@ -178,59 +203,86 @@ function App() {
       status['bar'] = -1;
       status['kol'] = -1;
       status['koin'] = -1;
+      
+      if (jumMelangkah >= 2) {
 
+      }
       for (var i = 0; i < 5; i++) {
         for (var j = 0; j < 5; j++) {
           if (_papan.arr[i][j].length == 0)     // jika kotak tsb kondisi kosong
           {
+            var aw = 0; var ak = 0;
             if (jumMelangkah < 2) {
-
+              if (_giliran == global.BLACKTURN){
+                aw = global.FLATSTONE_BLACK;
+                ak = global.FLATSTONE_BLACK;
+              } else {
+                aw = global.FLATSTONE_WHITE;
+                ak = global.FLATSTONE_WHITE;
+              }
             }
-            else  // jumMelangkah < 2 adlah @ player melangkah pertama kali (harus flat_stone)
+            else 
             {
-              var _arr = copyArray(_papan.arr);
-              var koin = "";
-              var _notgiliran = _giliran;
               if (_giliran == global.BLACKTURN) {
-                // koin = global.FLATSTONE_WHITE;
-                // _notgiliran = global.BLACKTURN;
-                // koin = koinjalan;
-                // if (koinjalan == global.CAPSTONE_WHITE) {
-                //   if (putih.cap == 0) {
-                //     _arr[i][j].push(koinjalan);
-                //     putih.cap = putih.cap + 1;
-                //   } else {
-                //     continue;
-                //   }
-                // } else if (koinjalan == global.WALLSTONE_WHITE){
-                //   if (putih.wall + putih.flat >= 21) {
-                //     continue;
-                //   } else {
-                //     _arr[i][j].push(koinjalan);
-                //     putih.wall = putih.wall + 1;
-                //   }
-                // } else {
-                //   if (putih.wall + putih.flat >= 21) {
-                //     continue;
-                //   } else {
-                //     _arr[i][j].push(koinjalan);
-                //     putih.flat = putih.flat + 1;
-                //   }
-                // }
-              
+                aw = global.FLATSTONE_BLACK; 
+                ak = global.CAPSTONE_BLACK; 
+                if(hitam.cap > 0) {
+                  ak = global.WALLSTONE_BLACK; 
+                }
+              } else {
+                aw = global.FLATSTONE_WHITE; 
+                ak = global.CAPSTONE_WHITE; 
+                if(putih.cap > 0) { 
+                  ak = global.WALLSTONE_WHITE; 
+                }
               }
-              else {
-                _notgiliran = global.BLACKTURN;
-                koin = global.FLATSTONE_BLACK;
-                _arr[i][j].push(global.FLATSTONE_BLACK);
-              }
+              for(var koinjalan = aw; koinjalan <= ak; koinjalan++) {
+                var _arr = copyArray(_papan.arr);
+                var koin = "";
+                var _notgiliran = _giliran;
+                if (_giliran == global.BLACKTURN) {
+                  koin = global.FLATSTONE_WHITE;
+                  _notgiliran = global.BLACKTURN;
+                  koin = koinjalan;
+                  if (koinjalan == global.CAPSTONE_WHITE) {
+                    if (putih.cap == 0) {
+                      _arr[i][j].push(koinjalan);
+                      putih.cap = putih.cap + 1;
+                    } else {
+                      continue;
+                    }
+                  } 
+                  if (koinjalan == global.WALLSTONE_WHITE){
+                    if (putih.wall + putih.flat >= 21) {
+                      continue;
+                    } else {
+                      _arr[i][j].push(koinjalan);
+                      putih.wall = putih.wall + 1;
+                    }
+                  } 
+                  if (koinjalan == global.CAPSTONE_WHITE) {
+                    if (putih.wall + putih.flat >= 21) {
+                      continue;
+                    } else {
+                      _arr[i][j].push(koinjalan);
+                      putih.flat = putih.flat + 1;
+                    }
+                  }
+                
+                }
+                else {
+                  _notgiliran = global.BLACKTURN;
+                  koin = global.FLATSTONE_BLACK;
+                  _arr[i][j].push(global.FLATSTONE_BLACK);
+                }
 
-              var weight = maksimum(_level + 1, _notgiliran, new Clsboard(_giliran, _arr), _result);
-              if (weight < status['maxweight']) {
-                status['maxweight'] = weight;
-                status['bar'] = i;
-                status['kol'] = j;
-                status['koin'] = koin;
+                var weight = maksimum(_level + 1, _notgiliran, new Clsboard(_giliran, _arr), _result);
+                if (weight < status['maxweight']) {
+                  status['maxweight'] = weight;
+                  status['bar'] = i;
+                  status['kol'] = j;
+                  status['koin'] = koin;
+                }
               }
             }
           }
@@ -302,9 +354,9 @@ function App() {
               }
               else {
                 _notgiliran = global.BLACKTURN;
+                // console.log("koinjalan = " + koinjalan)
                 koin = koinjalan;
                 if (koinjalan == global.CAPSTONE_WHITE) {
-                  console.log(putih.cap)
                   if (putih.cap === 0) {
                     setPutih({
                       flat: putih.flat,
@@ -343,6 +395,7 @@ function App() {
 
               var weight = minimum(_level + 1, _notgiliran, new Clsboard(_giliran, _arr), _result);
               if (weight > status['maxweight']) {
+                console.log('koin' , koin)
                 status['maxweight'] = weight;
                 status['bar'] = i;
                 status['kol'] = j;
@@ -362,32 +415,32 @@ function App() {
 
   function pertama(brs, klm){
     // pertama kali AI
-    if(giliran == global.BLACKTURN){
-      if (jumMelangkah == 0) {
-        var level = 1
-        var result = [];
-        result['maxweight'] = 0;
-        result['bar'] = -1;
-        result['kol'] = -1;
-        result['koin'] = -1;
-        maksimum(level, giliran, papan, result);
-        papan.arr[result['bar']][result['kol']].push(global.FLATSTONE_BLACK);
+    if (jumMelangkah == 0) {
+      var level = 1
+      var result = [];
+      result['maxweight'] = 0;
+      result['bar'] = -1;
+      result['kol'] = -1;
+      result['koin'] = -1;
+      maksimum(level, giliran, papan, result);
+      papan.arr[result['bar']][result['kol']].push(global.FLATSTONE_BLACK);
+      setHitam({
+        flat: hitam.flat + 1,
+        wall: hitam.wall, 
+        cap: hitam.cap
+      })
+
+      if (papan.arr[brs][klm].length == 0) {
         papan.arr[brs][klm].push(global.FLATSTONE_WHITE);
-        setHitam({
-          flat: hitam.flat + 1,
-          wall: hitam.wall, 
-          cap: hitam.cap
+        setPutih({
+          flat: putih.flat + 1,
+          wall: putih.wall, 
+          cap: putih.cap
         })
         setJumMelangkah(1);
+      } else {
+        console.log("salah")
       }
-    } else {
-      papan.arr[brs][klm].push(global.FLATSTONE_WHITE);
-      setPutih({
-        flat: putih.flat + 1,
-        wall: putih.wall, 
-        cap: putih.cap
-      })
-      setJumMelangkah(1);
     }
   }
 
@@ -409,8 +462,6 @@ function App() {
           return; 
         }
         else {
-          console.log("masukkkkk")
-          console.log(result['koin'])
           if(result['koin'] == global.FLATSTONE_WHITE){
             
               papan.arr[result['bar']][result['kol']].push(global.FLATSTONE_WHITE);
