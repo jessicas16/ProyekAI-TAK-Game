@@ -75,6 +75,11 @@ function App() {
             if(cekMenang(_papan.arr, global.WHITETURN, i, j) == true) { return 1000; }
           }
 
+          // pengecekan kalau harus ngeblok player spy tidak menang          
+          // _papan.arr[i][j].push(global.FLATSTONE_BLACK);
+          // var res = cekMenang(_papan.arr, global.BLACKTURN, i, j);
+          // _papan.arr[i][j].pop();
+          // if(res == true) { return 900; }  
 
 
           var t = _papan.arr[i][j].length - 1;
