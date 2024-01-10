@@ -4,11 +4,11 @@ import { Clsboard } from './Clsboard'
 
 function App() {
   var [sbe, setSBE] = useState([
-    [3, 1,  2,  1,  3],
-    [1, 3,  4, 3,  1],
-    [2, 4, 2, 4, 2],
-    [1, 3,  4, 3,  1],
-    [3, 1,  2,  1,  3]
+    [1, 2, 3, 2, 1],
+    [2, 4, 5, 4, 2],
+    [3, 5, 6, 5, 3],
+    [2, 4, 5, 4, 2],
+    [1, 2, 3, 2, 1]
   ]);
   var [papan, setPapan] = useState(
     new Clsboard(global.BLACKTURN, [
@@ -75,11 +75,16 @@ function App() {
             if(cekMenang(_papan.arr, global.WHITETURN, i, j) == true) { return 1000; }
           }
 
-          // pengecekan kalau harus ngeblok player spy tidak menang          
-          // _papan.arr[i][j].push(global.FLATSTONE_BLACK);
-          // var res = cekMenang(_papan.arr, global.BLACKTURN, i, j);
-          // _papan.arr[i][j].pop();
-          // if(res == true) { return 900; }  
+          if (!sudah){
+            // pengecekan kalau harus ngeblok player spy tidak menang          
+            _papan.arr[i][j].push(global.FLATSTONE_BLACK);
+            var res = cekMenang(_papan.arr, global.BLACKTURN, i, j);
+            _papan.arr[i][j].pop();
+            if(res == true) { 
+              setSudah(true)
+              return 900;
+            }  
+          }
 
 
           var t = _papan.arr[i][j].length - 1;
@@ -189,8 +194,9 @@ function App() {
   }
 
   function minimum(_level, _giliran, _papan, _result) {
+    console.log("minimum Level = " + _level);
     if (_level > maxLevel) {
-      console.log("weight" + findWeight(_papan));
+      console.log("weight" + findWeight(_papan))
       return findWeight(_papan);
     }
     else {
@@ -199,7 +205,7 @@ function App() {
       status['bar'] = -1;
       status['kol'] = -1;
       status['koin'] = -1;
-      
+
       if (jumMelangkah >= 2) {
 
       }
@@ -207,78 +213,31 @@ function App() {
         for (var j = 0; j < 5; j++) {
           if (_papan.arr[i][j].length == 0)     // jika kotak tsb kondisi kosong
           {
-            var aw = 0; var ak = 0;
             if (jumMelangkah < 2) {
-              if (_giliran == global.BLACKTURN){
-                aw = global.FLATSTONE_BLACK;
-                ak = global.FLATSTONE_BLACK;
-              } else {
-                aw = global.FLATSTONE_WHITE;
-                ak = global.FLATSTONE_WHITE;
-              }
-            }
-            else 
-            {
-              if (_giliran == global.BLACKTURN) {
-                aw = global.FLATSTONE_BLACK; 
-                ak = global.CAPSTONE_BLACK; 
-                if(hitam.cap > 0) {
-                  ak = global.WALLSTONE_BLACK; 
-                }
-              } else {
-                aw = global.FLATSTONE_WHITE; 
-                ak = global.CAPSTONE_WHITE; 
-                if(putih.cap > 0) { 
-                  ak = global.WALLSTONE_WHITE; 
-                }
-              }
-              for(var koinjalan = aw; koinjalan <= ak; koinjalan++) {
-                var _arr = copyArray(_papan.arr);
-                var koin = "";
-                var _notgiliran = _giliran;
-                if (_giliran == global.BLACKTURN) {
-                  koin = global.FLATSTONE_WHITE;
-                  _notgiliran = global.BLACKTURN;
-                  koin = koinjalan;
-                  if (koinjalan == global.CAPSTONE_WHITE) {
-                    if (putih.cap == 0) {
-                      _arr[i][j].push(koinjalan);
-                      putih.cap = putih.cap + 1;
-                    } else {
-                      continue;
-                    }
-                  } 
-                  if (koinjalan == global.WALLSTONE_WHITE){
-                    if (putih.wall + putih.flat >= 21) {
-                      continue;
-                    } else {
-                      _arr[i][j].push(koinjalan);
-                      putih.wall = putih.wall + 1;
-                    }
-                  } 
-                  if (koinjalan == global.CAPSTONE_WHITE) {
-                    if (putih.wall + putih.flat >= 21) {
-                      continue;
-                    } else {
-                      _arr[i][j].push(koinjalan);
-                      putih.flat = putih.flat + 1;
-                    }
-                  }
-                
-                }
-                else {
-                  _notgiliran = global.BLACKTURN;
-                  koin = global.FLATSTONE_BLACK;
-                  _arr[i][j].push(global.FLATSTONE_BLACK);
-                }
 
-                var weight = maksimum(_level + 1, _notgiliran, new Clsboard(_giliran, _arr), _result);
-                if (weight < status['maxweight']) {
-                  status['maxweight'] = weight;
-                  status['bar'] = i;
-                  status['kol'] = j;
-                  status['koin'] = koin;
-                }
+            }
+            else  // jumMelangkah < 2 adlah @ player melangkah pertama kali (harus flat_stone)
+            {
+              var _arr = copyArray(_papan.arr);
+              var koin = "";
+              var _notgiliran = _giliran;
+              if (_giliran == global.BLACKTURN) {
+                _notgiliran = global.WHITETURN;
+                koin = global.FLATSTONE_WHITE;
+                _arr[i][j].push(global.FLATSTONE_WHITE);
+              }
+              else {
+                _notgiliran = global.BLACKTURN;
+                koin = global.FLATSTONE_BLACK;
+                _arr[i][j].push(global.FLATSTONE_BLACK);
+              }
+
+              var weight = maksimum(_level + 1, _notgiliran, new Clsboard(_giliran, _arr), _result);
+              if (weight < status['maxweight']) {
+                status['maxweight'] = weight;
+                status['bar'] = i;
+                status['kol'] = j;
+                status['koin'] = koin;
               }
             }
           }
@@ -293,6 +252,7 @@ function App() {
   }
 
   function maksimum(_level, _giliran, _papan, _result) {
+    console.log("Maksimum", _level)
     if (_level <= maxLevel) {
       var status = [];
       status['maxweight'] = 0;
@@ -384,6 +344,7 @@ function App() {
               }
 
               var weight = minimum(_level + 1, _notgiliran, new Clsboard(_giliran, _arr), _result);
+              console.log(status["maxweight"])
               if (weight > status['maxweight']) {
                 // console.log('koin' , koin)
                 status['maxweight'] = weight;
