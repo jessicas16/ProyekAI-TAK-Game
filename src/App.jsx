@@ -22,7 +22,7 @@ function App() {
   var [batu, setBatu] = useState("FLAT");
   var [giliran, setGiliran] = useState(global.BLACKTURN);
   var [jumMelangkah, setJumMelangkah] = useState(0);
-  var [maxLevel, setMaxLevel] = useState(1);
+  var [maxLevel, setMaxLevel] = useState(2);
   var [brsAngkat, setBrsAngkat] = useState(-1);
   var [klmAngkat, setKlmAngkat] = useState(-1);
   var [lastBrs, setLastBrs] = useState(-1);
@@ -213,8 +213,31 @@ function App() {
         for (var j = 0; j < 5; j++) {
           if (_papan.arr[i][j].length == 0)     // jika kotak tsb kondisi kosong
           {
-            if (jumMelangkah < 2) {
-
+            if (jumMelangkah < 2) { 
+              //harus flat
+              var _arr = copyArray(_papan.arr);
+              var koin = "";
+              var _notgiliran = _giliran;
+              if (_giliran == global.BLACKTURN) {
+                _notgiliran = global.WHITETURN;
+                koin = global.FLATSTONE_BLACK;
+                _arr[i][j].push(global.FLATSTONE_BLACK);
+              }
+              else {
+                _notgiliran = global.BLACKTURN;
+                koin = global.FLATSTONE_WHITE;
+                _arr[i][j].push(global.FLATSTONE_WHITE);
+              }   
+              
+              var weight = maksimum(_level + 1, _notgiliran, new Clsboard(_giliran, _arr), _result);
+              console.log("weight = " + weight)
+              console.log(status['maxweight'])
+              if (weight < status['maxweight']) {
+                status['maxweight'] = weight;
+                status['bar'] = i;
+                status['kol'] = j;
+                status['koin'] = koin;
+              }
             }
             else  // jumMelangkah < 2 adlah @ player melangkah pertama kali (harus flat_stone)
             {
@@ -346,7 +369,6 @@ function App() {
               var weight = minimum(_level + 1, _notgiliran, new Clsboard(_giliran, _arr), _result);
               console.log(status["maxweight"])
               if (weight > status['maxweight']) {
-                // console.log('koin' , koin)
                 status['maxweight'] = weight;
                 status['bar'] = i;
                 status['kol'] = j;
