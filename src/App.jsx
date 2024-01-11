@@ -22,7 +22,7 @@ function App() {
   var [batu, setBatu] = useState("FLAT");
   var [giliran, setGiliran] = useState(global.BLACKTURN);
   var [jumMelangkah, setJumMelangkah] = useState(0);
-  var [maxLevel, setMaxLevel] = useState(3);
+  var [maxLevel, setMaxLevel] = useState(2);
   var [brsAngkat, setBrsAngkat] = useState(-1);
   var [klmAngkat, setKlmAngkat] = useState(-1);
   var [lastBrs, setLastBrs] = useState(-1);
@@ -93,30 +93,30 @@ function App() {
               if (_papan.arr[i][j][t] == global.FLATSTONE_BLACK) {
                 weight = weight + (sbe[i][j]) + 4;
               } else if (_papan.arr[i][j][t] == global.WALLSTONE_BLACK) {
-                weight = weight + (sbe[i][j]) + 1;
+                weight = weight + (sbe[i][j]) + 2;
               } else if (_papan.arr[i][j][t] == global.CAPSTONE_BLACK){
                 weight = weight + (sbe[i][j]) + 10;
               } else  if (_papan.arr[i][j][t] == global.FLATSTONE_WHITE) {
-                weight = weight + (sbe[i][j]) - 4;
+                weight = weight + (sbe[i][j]) - 2;
               } else if (_papan.arr[i][j][t] == global.WALLSTONE_WHITE) {
                 weight = weight + (sbe[i][j]) - 1;
               } else if (_papan.arr[i][j][t] == global.CAPSTONE_WHITE){
-                weight = weight + (sbe[i][j]) - 10;
+                weight = weight + (sbe[i][j]) - 5;
               }
             }
           }
           else {
             if (_papan.arr[i][j][t] >= global.FLATSTONE_WHITE && _papan.arr[i][j][t] <= global.CAPSTONE_WHITE) {
               if (_papan.arr[i][j][t] == global.FLATSTONE_BLACK) {
-                weight = weight + (sbe[i][j]) - 4;
+                weight = weight + (sbe[i][j]) - 2;
               } else if (_papan.arr[i][j][t] == global.WALLSTONE_BLACK) {
                 weight = weight + (sbe[i][j]) - 1;
               } else if (_papan.arr[i][j][t] == global.CAPSTONE_BLACK){
-                weight = weight + (sbe[i][j]) - 10;
+                weight = weight + (sbe[i][j]) - 5;
               } else  if (_papan.arr[i][j][t] == global.FLATSTONE_WHITE) {
                 weight = weight + (sbe[i][j]) + 4;
               } else if (_papan.arr[i][j][t] == global.WALLSTONE_WHITE) {
-                weight = weight + (sbe[i][j]) + 1;
+                weight = weight + (sbe[i][j]) + 2;
               } else if (_papan.arr[i][j][t] == global.CAPSTONE_WHITE){
                 weight = weight + (sbe[i][j]) + 10;
               }
@@ -193,9 +193,10 @@ function App() {
     }
   }
 
-  function minimum(_level, _giliran, _papan, _result, alpha, beta) {
+  function minimum(_level, _giliran, _papan, _result) {
     console.log("minimum Level = " + _level);
     if (_level > maxLevel) {
+      console.log("weight" + findWeight(_papan))
       return findWeight(_papan);
     }
     else {
@@ -205,6 +206,9 @@ function App() {
       status['kol'] = -1;
       status['koin'] = -1;
 
+      if (jumMelangkah >= 2) {
+
+      }
       for (var i = 0; i < 5; i++) {
         for (var j = 0; j < 5; j++) {
           if (_papan.arr[i][j].length == 0)     // jika kotak tsb kondisi kosong
@@ -224,12 +228,11 @@ function App() {
                 koin = global.FLATSTONE_WHITE;
                 _arr[i][j].push(global.FLATSTONE_WHITE);
               }   
-              beta = Math.min(_result['maxweight'], beta); 
-              if (beta <= alpha){
-                break;
-              }
+              
               var weight = maksimum(_level + 1, _notgiliran, new Clsboard(_giliran, _arr), _result);
-              if (weight < _result['maxweight']) {
+              console.log("weight = " + weight)
+              console.log(status['maxweight'])
+              if (weight < status['maxweight']) {
                 status['maxweight'] = weight;
                 status['bar'] = i;
                 status['kol'] = j;
@@ -251,21 +254,13 @@ function App() {
                 koin = global.FLATSTONE_BLACK;
                 _arr[i][j].push(global.FLATSTONE_BLACK);
               }
-              beta = Math.min(_result['maxweight'], beta); 
-              if (beta <= alpha){
-                break;
-              }
-              var weight = maksimum(_level + 1, _notgiliran, new Clsboard(_giliran, _arr), _result, alpha, beta);
-              if (weight < _result['maxweight']) {
-                console.log(status["koin"])
+
+              var weight = maksimum(_level + 1, _notgiliran, new Clsboard(_giliran, _arr), _result);
+              if (weight < status['maxweight']) {
                 status['maxweight'] = weight;
                 status['bar'] = i;
                 status['kol'] = j;
                 status['koin'] = koin;
-                beta = Math.min(status['maxweight'], beta);
-                if (beta <= alpha){
-                  break;
-                }
               }
             }
           }
@@ -277,12 +272,10 @@ function App() {
       _result['kol'] = status['kol'];
       _result['koin'] = status['koin'];
     }
-
-    return findWeight(_papan)
   }
 
-  function maksimum(_level, _giliran, _papan, _result, alpha, beta) {
-    // console.log("Maksimum", _level)
+  function maksimum(_level, _giliran, _papan, _result) {
+    console.log("Maksimum", _level)
     if (_level <= maxLevel) {
       var status = [];
       status['maxweight'] = 0;
@@ -351,17 +344,6 @@ function App() {
                     })
                   } 
                 } 
-                if (koinjalan == global.FLATSTONE_WHITE) {
-                  if (putih.wall + putih.flat < 21) {
-                    _arr[i][j].push(koinjalan);
-                    setPutih({
-                      flat: putih.flat + 1,
-                      wall: putih.wall, 
-                      cap: putih.cap
-                    })
-                  }
-                }
-                
                 if (koinjalan == global.WALLSTONE_WHITE){
                   if (putih.wall + putih.flat < 21) {
                     _arr[i][j].push(koinjalan);
@@ -372,21 +354,25 @@ function App() {
                     })
                   } 
                 } 
+                if (koinjalan == global.FLATSTONE_WHITE) {
+                  if (putih.wall + putih.flat < 21) {
+                    _arr[i][j].push(koinjalan);
+                    setPutih({
+                      flat: putih.flat + 1,
+                      wall: putih.wall, 
+                      cap: putih.cap
+                    })
+                  }
+                }
               }
-              alpha = Math.max(_result['maxweight'], alpha);
-              if (beta <= alpha){
-                break;
-              }
-              var weight = minimum(_level + 1, _notgiliran, new Clsboard(_giliran, _arr), _result, alpha, beta);
-              if (weight >_result['maxweight']) {
+
+              var weight = minimum(_level + 1, _notgiliran, new Clsboard(_giliran, _arr), _result);
+              console.log(status["maxweight"])
+              if (weight > status['maxweight']) {
                 status['maxweight'] = weight;
                 status['bar'] = i;
                 status['kol'] = j;
                 status['koin'] = koin;
-                alpha = Math.max(status['maxweight'], alpha);
-                if (beta <= alpha){
-                  break;
-                }
               }
             }
           }
@@ -398,8 +384,6 @@ function App() {
       _result['kol'] = status['kol'];
       _result['koin'] = status['koin'];
     }
-    var w = findWeight(_papan);
-    return w;
   }
 
   function pertama(brs, klm){
@@ -411,10 +395,7 @@ function App() {
       result['bar'] = -1;
       result['kol'] = -1;
       result['koin'] = -1;
-      var alpha =  Number.MIN_SAFE_INTEGER;
-      var beta = Number.MAX_SAFE_INTEGER;
-      maksimum(level, giliran, papan, result, alpha, beta);
-      console.log("result = " + result['maxweight'] + " --- " + result['bar'] + " ---- " + result['kol']);
+      maksimum(level, giliran, papan, result);
       papan.arr[result['bar']][result['kol']].push(global.FLATSTONE_BLACK);
       setHitam({
         flat: hitam.flat + 1,
@@ -444,7 +425,7 @@ function App() {
       result['bar'] = -1;
       result['kol'] = -1;
       result['koin'] = -1;
-      maksimum(level, giliran, papan, result, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
+      maksimum(level, giliran, papan, result);
       console.log("result = " + result['maxweight'] + " --- " + result['bar'] + " ---- " + result['kol']);
       console.log(result['koin'])
 
@@ -955,7 +936,7 @@ function App() {
     setBatu("FLAT");
     setGiliran(global.BLACKTURN);
     setJumMelangkah(0);
-    setMaxLevel(5);
+    setMaxLevel(1);
     setBrsAngkat(-1);
     setKlmAngkat(-1);
     setLastBrs(-1);
